@@ -1,0 +1,27 @@
+{
+  "name": "wetube",
+  "version": "1.0.0",
+  "description": "This project is Youtube Clone Coding.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peacemaker474/wetube.git"
+  },
+  "scripts": {
+    "dev": "nodemon --exec babel-node src/server.js"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peacemaker474/wetube/issues"
+  },
+  "homepage": "https://github.com/peacemaker474/wetube#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "nodemon": "^2.0.13"
+  }
+}
