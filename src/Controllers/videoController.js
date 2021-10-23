@@ -1,18 +1,12 @@
 // GlobalRouter Section
-
-const trending = (req, res) => {
-    res.send("Home Page Videos");
-};
-
-const search = (req, res) => {
-    res.send("Search Video");
-}
+const trending = (req, res) => 
+    res.render("home", { pageTitle: "Home" });
+const search = (req, res) => res.send("Search Video");
 
 // VideoRouter Section
 
-const handleSeeVideo = (req, res) => {
-    res.send("Watch");
-}
+const handleSeeVideo = (req, res) =>
+    res.render("watch", { pageTitle : "Watch" });
 
 const handleEditVideo = (req, res) => {
     res.send("Edit");
