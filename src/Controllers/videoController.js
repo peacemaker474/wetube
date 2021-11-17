@@ -3,13 +3,24 @@ import VideoModel from "../models/Video";
 // GlobalRouter Section
 export const home = async (req, res) => {
     try{
-        const videos = await VideoModel.find({});
+        const videos = await VideoModel.find({}).sort({createdAt: "asc"});
         return res.render("home", { pageTitle: "Home", videos });
     } catch {
         return res.render("Server-Error");
     }
 }
-export const search = (req, res) => res.send("Search Video");
+export const search = async (req, res) => {
+    const { keyword } = req.query;
+    let videos = [];
+    if (keyword) {
+        videos = await VideoModel.find({
+            title: {
+                $regex: new RegExp(keyword, "i"),
+            },
+        })
+    }
+    return res.render("search", { pageTitle: "Search", videos });
+}
 
 // VideoRouter Section
 
