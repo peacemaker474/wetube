@@ -109,7 +109,6 @@ export const handleFinishGithubLogin = async (req, res) => {
                 },
             })
         ).json();
-        console.log(userData);
         const emailData = await (
             await fetch(`${apiUrl}/user/emails`, {
                 headers: {
@@ -148,9 +147,37 @@ export const handleSeeUser = (req, res) => {
     res.send("My Profile");
 };
 
-export const handleEditUser = (req, res) => {
-    res.send("Edit User");
+export const getEditUser = (req, res) => {
+    return res.render("edit-profile", {pageTitle: "Edit Profile"})
 };
+
+export const postEditUser = async (req, res) => {
+    const {
+        session: {
+            user: { _id },
+        },
+        body: { name, username, email, location }
+    } = req;
+
+    const userExists = await UserModel.exists({
+        _id: { $ne: _id},
+        $or: [{username}, {email}],
+    });
+    if (userExists) {
+        return res.status(400).render("edit-profile", {
+            pageTitle: "Edit Profifle",
+            errorMessage: "User alredy exist",
+        });
+    }
+    const updateUser = await UserModel.findByIdAndUpdate(_id, {
+        name,
+        username,
+        email,
+        location
+    }, {new: true});
+    req.session.user = updateUser;
+    return res.redirect("/users/edit");
+}
 
 export const handleDeleteUser = (req, res) => {
     res.send("Delete User");
