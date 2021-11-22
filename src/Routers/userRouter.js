@@ -26,6 +26,6 @@ userRouter.get("/delete", handleDeleteUser);
 userRouter.get("/logout", protectorMiddleware, handleLogOut);
 userRouter.get("/github/start", publicOnlyMiddleware, handleStartGithubLogin);
 userRouter.get("/github/finish", publicOnlyMiddleware, handleFinishGithubLogin);
-userRouter.get("/:id(\\d+)", handleSeeUser);
+userRouter.get("/:id", handleSeeUser);
 
 export default userRouter;

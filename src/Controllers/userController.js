@@ -1,4 +1,5 @@
 import UserModel from '../models/User';
+import VideoModel from '../models/Video';
 import fetch from 'node-fetch';
 import bcrypt from 'bcrypt';
 
@@ -143,8 +144,17 @@ export const handleFinishGithubLogin = async (req, res) => {
 
 // UserRotuer Section
 
-export const handleSeeUser = (req, res) => {
-    res.send("My Profile");
+export const handleSeeUser = async (req, res) => {
+    const { id } = req.params;
+    const user = await UserModel.findById(id).populate("videos");
+    if (!user) {
+        return res.status(404).render("404", {pageTitle: "User not found"});
+    }
+    
+    return res.render("users/profile", {
+        pageTitle: user.name,
+        user,
+    });
 };
 
 export const getEditUser = (req, res) => {

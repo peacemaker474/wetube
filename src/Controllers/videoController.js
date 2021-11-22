@@ -1,4 +1,5 @@
 import VideoModel from "../models/Video";
+import UserModel from "../models/User";
 
 // GlobalRouter Section
 export const home = async (req, res) => {
@@ -26,7 +27,8 @@ export const search = async (req, res) => {
 
 export const handleSeeVideo = async (req, res) => {
     const { id } = req.params;
-    const video = await VideoModel.findById(id);
+    const video = await VideoModel.findById(id).populate("owner");
+    
     if (!video) {
         return res.render("404", { pageTitle: "Video not found." });
     }
@@ -35,9 +37,15 @@ export const handleSeeVideo = async (req, res) => {
 
 export const handleGetEditVideo = async (req, res) => {
     const { id } = req.params;
+    const {
+        user: { _id }
+    } = req.session;
     const video = await VideoModel.findById(id);
     if (!video) {
         return res.status(404).render("404", { pageTitle: "Video not found." });
+    }
+    if (String(video.owner) !== String(_id)) {
+        return res.status(403).redirect("/");
     }
     return res.render("videoEdit", {pageTitle : `Edit: ${video.title}`, video});
 }
@@ -45,9 +53,15 @@ export const handleGetEditVideo = async (req, res) => {
 export const handlePostEditVideo = async (req, res) => {
     const { id } = req.params;
     const { title, description, hashtags } = req.body;
+    const {
+        user: { _id }
+    } = req.session;
     const video = await VideoModel.exists({_id: id});
     if (!video) {
         return res.status(404).render("404", { pageTitle: "Video not found." });
+    }
+    if (String(video.owner) !== String(_id)) {
+        return res.status(403).redirect("/");
     }
     await VideoModel.findByIdAndUpdate(id, {
         title,
@@ -62,15 +76,22 @@ export const handleGetUploadVideo = (req, res) => {
 };
 
 export const handlePostUploadVideo = async (req, res) => {
+    const {
+        user : { _id }
+    } = req.session;
     const { path: fileUrl } = req.file;
     const { title, description, hashtags } = req.body;
     try {
-        await VideoModel.create({
+        const newVideo = await VideoModel.create({
             title,
             description,
             fileUrl,
+            owner: _id,
             hashtags:VideoModel.formatHashtags(hashtags),
         });
+        const user = await UserModel.findById(_id);
+        user.videos.push(newVideo._id);
+        user.save();
         return res.redirect("/");
     } catch(error) {
         return res.status(400).render("videoUpload", {
@@ -82,6 +103,16 @@ export const handlePostUploadVideo = async (req, res) => {
 
 export const handleDeleteVideo = async (req, res) => {
     const { id } = req.params;
+    const {
+        user: { _id }
+    } = req.session;
+    const video = await VideoModel.findById(id);
+    if (!video) {
+        return res.status(404).render("404", { pageTitle: "Video not found." });
+    }
+    if (String(video.owner) !== String(_id)) {
+        return res.status(403).redirect("/");
+    }
     await VideoModel.findByIdAndDelete(id);
     return res.redirect("/");
 };
