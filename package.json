@@ -7,7 +7,8 @@
     "url": "git+https://github.com/peacemaker474/wetube.git"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node src/init.js"
+    "dev:server": "nodemon",
+    "dev:assets": "webpack"
   },
   "license": "MIT",
   "bugs": {
@@ -30,6 +31,13 @@
     "@babel/core": "^7.15.8",
     "@babel/node": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
-    "nodemon": "^2.0.13"
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.5.1",
+    "mini-css-extract-plugin": "^2.4.5",
+    "nodemon": "^2.0.13",
+    "sass": "^1.43.4",
+    "sass-loader": "^12.3.0",
+    "webpack": "^5.64.2",
+    "webpack-cli": "^4.9.1"
   }
 }
