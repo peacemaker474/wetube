@@ -5,7 +5,7 @@ form {
     background-color: rgba($color: #ba8475, $alpha: 0.5);
     border-radius: 10px;
 }
-input {
+input:not(input[type="range"]) {
     all: unset;
     width: 90%;
     padding: 10px 20px;
