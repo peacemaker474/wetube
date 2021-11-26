@@ -1,0 +1,43 @@
+#videoContainer {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    .videoControls {
+        width: 100%;
+        height: 5%;
+        display: grid;
+        grid-template-columns: 10% 70% 15% 5%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0.4);
+        font-size: 1.4rem;
+        .videoControls__play {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            .videoControls__playBtn {
+                display: block;
+                width: 10%;
+                margin-left: 10px;
+            }
+        }
+        .videoControls__volume {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            input {
+                width: 70%;
+            }
+            span {
+                width: 30%;
+            }
+        }
+        .videoControls__screen {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-right: 10px;
+        }
+    }
+}
