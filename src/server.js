@@ -6,6 +6,7 @@ import rootRouter from './Routers/rootRouter';
 import userRouter from './Routers/userRouter';
 import videoRouter from './Routers/videoRouter';
 import { localsMiddleware } from './middlewares';
+import apiRouter from './Routers/apiRouter';
 
 const app = express();
 const logger = morgan("dev");
@@ -26,6 +27,13 @@ app.use(session({
 app.use(localsMiddleware);
 app.use("/uploads", express.static("uploads"));
 app.use("/assets", express.static("assets"));
+app.use("/api", apiRouter);
+app.use("/convert", express.static("node_modules/@ffmpeg/core/dist"));
+app.use((req, res, next) => {
+    res.header("Cross-Origin-Embedder-Policy", "require-corp");
+    res.header("Cross-Origin-Opener-Policy", "same-origin");
+    next();
+})
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);

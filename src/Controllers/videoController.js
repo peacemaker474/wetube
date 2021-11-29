@@ -79,13 +79,14 @@ export const handlePostUploadVideo = async (req, res) => {
     const {
         user : { _id }
     } = req.session;
-    const { path: fileUrl } = req.file;
+    const { video, thumb } = req.files;
     const { title, description, hashtags } = req.body;
     try {
         const newVideo = await VideoModel.create({
             title,
             description,
-            fileUrl,
+            fileUrl: video[0].path,
+            thumbUrl: thumb[0].path,
             owner: _id,
             hashtags:VideoModel.formatHashtags(hashtags),
         });
@@ -116,3 +117,14 @@ export const handleDeleteVideo = async (req, res) => {
     await VideoModel.findByIdAndDelete(id);
     return res.redirect("/");
 };
+
+export const registerView = async (req, res) => {
+    const { id } = req.params;
+    const video = await VideoModel.findById(id);
+    if (!video) {
+        return res.sendStatus(404);
+    }
+    video.meta.views = video.meta.views + 1;
+    await video.save();
+    return res.sendStatus(200);
+}
