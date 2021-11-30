@@ -133,4 +133,4 @@ fullScreenBtn.addEventListener("click", handleFullScreen);
 videoContainer.addEventListener("mousemove", handleMouseMove);
 videoContainer.addEventListener("mouseleave", handelMouseLeave);
 video.addEventListener("click", handleMonitorClick);
-window.addEventListener("keydown", handleSpacePlay);
+// window.addEventListener("keydown", handleSpacePlay);

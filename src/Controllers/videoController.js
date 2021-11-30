@@ -1,4 +1,5 @@
 import VideoModel from "../models/Video";
+import CommentModel from "../models/Comment";
 import UserModel from "../models/User";
 
 // GlobalRouter Section
@@ -27,7 +28,7 @@ export const search = async (req, res) => {
 
 export const handleSeeVideo = async (req, res) => {
     const { id } = req.params;
-    const video = await VideoModel.findById(id).populate("owner");
+    const video = await VideoModel.findById(id).populate("owner").populate("comments");
     
     if (!video) {
         return res.render("404", { pageTitle: "Video not found." });
@@ -45,6 +46,7 @@ export const handleGetEditVideo = async (req, res) => {
         return res.status(404).render("404", { pageTitle: "Video not found." });
     }
     if (String(video.owner) !== String(_id)) {
+        req.flash("error", "You are not the owner of the video");
         return res.status(403).redirect("/");
     }
     return res.render("videoEdit", {pageTitle : `Edit: ${video.title}`, video});
@@ -68,6 +70,7 @@ export const handlePostEditVideo = async (req, res) => {
         description,
         hashtags:VideoModel.formatHashtags(hashtags),
     })
+    req.flash("success", "Changes saved.");
     return res.redirect(`/videos/${id}`);
 };
 
@@ -127,4 +130,25 @@ export const registerView = async (req, res) => {
     video.meta.views = video.meta.views + 1;
     await video.save();
     return res.sendStatus(200);
+}
+
+export const createComment = async (req, res) => {
+    const {
+        session: { user },
+        body : { text },
+        params: { id },
+    } = req;
+
+    const video = await VideoModel.findById(id);
+    if (!video) {
+        return res.sendStatus(404);
+    }
+    const comment = await CommentModel.create({
+        text,
+        owner: user._id,
+        video: id,
+    });
+    video.comments.push(comment._id);
+    video.save();
+    return res.status(201).json({newCommentId: comment._id});
 }
